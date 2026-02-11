@@ -1,13 +1,10 @@
 """
 2026.02.03
-Ultralytics YOLO custom training script
+Ultralytics YOLO custom evaluation script
 
 Run:
-    python ultralytics_runner/train_custom.py
+    python ultralytics_runner/eval_custom.py
 
-Purpose:
-- Quick sanity check with coco8
-- Full-scale training on soldier EO dataset
 """
 
 import argparse

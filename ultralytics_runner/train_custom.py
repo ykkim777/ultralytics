@@ -15,20 +15,43 @@ import datetime
 from pathlib import Path
 
 from yaml import dump
+import csv
+
 from ultralytics import YOLO
 from ultralytics.utils import SETTINGS
+from logger import get_logger
 
 # ======================================================
 # Global constants & environment settings
 # ======================================================
 runs_dir = Path(SETTINGS["runs_dir"])  # yolo settings runs_dir
+logger = get_logger("train_custom")
 
 
 # ======================================================
-# Argument parsing
+# CLI args
 # ======================================================
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="yolo26n.pt",
+        help="Model path (default: yolo26n.pt)",
+    )
+    parser.add_argument(
+        "--data",
+        type=str,
+        required=True,
+        # default="/data/dataset_2025/datasets/soldier_eo_v1.2.yaml",
+        help="Dataset yaml",
+    )
+    parser.add_argument(
+        "--base-data",
+        type=str,
+        default=None,
+        help="Base dataset YAML for manual GT test evaluation",
+    )
     parser.add_argument(
         "--sanity", action="store_true", help="Run quick sanity check with coco8"
     )
@@ -37,14 +60,11 @@ def parse_args():
 
 args = parse_args()
 
-# ======================================================
-# User inputs (experiment identity)
-# ======================================================
-model_path = "yolo26n.pt"
-data_yaml = "missing_person_2025_v3_kcenter.yaml"  # "soldier_eo_v1.2.yaml"
+model_path = Path(args.model)
+data_yaml = Path(args.data)
 
-model_name = Path(model_path).stem
-dataset_name = Path(data_yaml).stem
+model_name = model_path.stem
+dataset_name = data_yaml.stem
 
 # ======================================================
 # Common hyperparameters
